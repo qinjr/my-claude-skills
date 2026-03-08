@@ -1,0 +1,12 @@
+{
+  "name": "alphacop",
+  "version": "1.0.0",
+  "description": "AlphaCopilot 项目开发助手 — 新闻驱动交易信号系统（A股/港股/美股）",
+  "author": {
+    "name": "qinjr",
+    "url": "https://github.com/qinjr"
+  },
+  "homepage": "https://github.com/qinjr/my-claude-skills",
+  "repository": "https://github.com/qinjr/my-claude-skills",
+  "keywords": ["alphacop", "trading", "a-stock", "tushare", "deepseek", "feishu"]
+}
