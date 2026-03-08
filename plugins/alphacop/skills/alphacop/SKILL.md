@@ -2,15 +2,20 @@
 name: alphacop
 description: |
   AlphaCopilot 项目专属 skill。
-  TRIGGER when: 用户提到 AlphaCopilot、A股信号、交易信号、飞书推送、Tushare、财联社爬虫，
-  或要求添加/调试 scraper / pipeline / scorer / notifier 等模块。
+  TRIGGER when: 用户提到 AlphaCopilot、A股信号、交易信号、Tushare、财联社爬虫，
+  或要求添加/调试 scraper / pipeline / scorer 等模块。
   ALWAYS trigger when: 用户在 AlphaCopilot 项目目录下工作且问到系统架构、配置、调试方法。
 ---
 
 # AlphaCopilot 开发助手
 
 AlphaCopilot 是一个 A 股新闻驱动交易信号系统：
-**新闻抓取 (Scout) → LLM 提取线索 (Processor) → 技术面验证 → 评分 → 飞书推送 (Notifier)**
+**新闻抓取 (Scout) → LLM 提取线索 (Processor) → 技术面验证 → 评分**
+
+## 运行环境
+
+云服务器：2 core / 2GB RAM / 40GB 存储。
+数据库使用 **SQLite**（嵌入式，无独立进程，内存占用 < 50MB，完全适配此规格）。
 
 ## 项目根目录
 
@@ -44,8 +49,6 @@ src/
     llm_client.py                # OpenAI-compatible chat → JSON
     tech.py                      # 技术指标 (Tushare A股 / Stooq 美港股)
     scorer.py                    # 纯函数评分
-  notifier/
-    feishu.py                    # 飞书 webhook 推送
 ```
 
 ---
@@ -82,7 +85,6 @@ src/
 | score_penalty | Float | 惩罚分（0-35）|
 | tech_snapshot | Text | JSON 技术指标快照 |
 | base_price | Float | 信号生成时收盘价 |
-| is_sent | Integer | 0=未推送 1=已推送 |
 | created_at | DateTime | 生成时间 |
 
 ---
@@ -95,8 +97,6 @@ Final Score = 50
             + LogicStrength  (0~+25)  事件类型分 × LLM置信度
             + TechResonance  (0~+20)  RSI/MA/量比规则
             - Penalty        (0~-35)  RSI超买/偏离均线/量能萎缩
-
-≥70 分 → 立即推送飞书
 ```
 
 **信源等级分：** Tier1=30, Tier2=25, Tier3=20, Tier4=12, Tier5=6
@@ -127,7 +127,6 @@ LLM_API_KEY=sk-...          # DeepSeek API key
 LLM_BASE_URL=https://api.deepseek.com/v1
 LLM_MODEL=deepseek-chat
 TUSHARE_TOKEN=...           # Tushare Pro token
-FEISHU_WEBHOOK_URL=https://open.feishu.cn/open-apis/bot/v2/hook/...
 SCOUT_BACKFILL_ON_STARTUP=false
 LOG_LEVEL=INFO
 ```
@@ -232,6 +231,3 @@ item.extra_meta = json.dumps({"key": "value"}, ensure_ascii=False)
 # 读取
 meta = json.loads(item.extra_meta) if item.extra_meta else {}
 ```
-
-**Q: 如何修改推送阈值？**
-在 `src/processor/pipeline.py` 找到 `if score_result["total"] >= 70:` 修改即可。
