@@ -20,7 +20,7 @@ AlphaCopilot 是一个 A 股新闻驱动交易信号系统：
 ## 项目根目录
 
 ```
-/Users/qinjiarui/Documents/side_projs/AlphaCopilot/
+/root/AlphaCopilot/
 ```
 
 ---
@@ -136,7 +136,7 @@ LOG_LEVEL=INFO
 ## 常用运行命令
 
 ```bash
-cd /Users/qinjiarui/Documents/side_projs/AlphaCopilot
+cd /root/AlphaCopilot
 
 # 启动完整系统（阻塞）
 python main.py
